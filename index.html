@@ -1,15 +1,43 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galerie de Chantier</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Galerie Auto depuis Google Drive (JSONP)</title>
+  <style>
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .gallery img {
+      width: 200px;
+      margin: 10px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Galerie de Chantier</h1>
-    <div id="gallery"></div>
-
-    <script src="script.js"></script>
+  <h1>Galerie d'images</h1>
+  <div class="gallery" id="gallery"></div>
+  
+  <script>
+    // Fonction de callback qui traitera les données renvoyées par le script Google Apps
+    function handleResponse(data) {
+      const gallery = document.getElementById("gallery");
+      data.files.forEach(function(file) {
+        const img = document.createElement("img");
+        img.src = "https://drive.google.com/uc?export=view&id=" + file.id;
+        img.alt = file.name;
+        gallery.appendChild(img);
+      });
+    }
+    
+    // Création et insertion de la balise <script> pour charger les données via JSONP
+    var script = document.createElement('script');
+    // Remplacez par l'URL de votre déploiement Google Apps Script et ajoutez le paramètre callback
+    script.src = "https://script.google.com/macros/s/AKfycbwdiyfTRceZHdDx9T97DVGuY7CYnWGi2ehG6fY_4o0ZXEv41KdJyoojXni5CzVsxW1N6g/exec?callback=handleResponse";
+    document.head.appendChild(script);
+  </script>
 </body>
 </html>
