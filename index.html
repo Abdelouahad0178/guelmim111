@@ -3,75 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Galerie Auto depuis Google Drive</title>
+  <title>Galerie Auto - Filtrage par Date (Jour complet)</title>
   <style>
+    /* Réinitialisation CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+      line-height: 1.6;
+      padding: 1rem;
+    }
+    header {
+      background-color: #2c3e50;
+      color: #fff;
+      padding: 2rem 0;
       text-align: center;
-      margin: 20px;
-      background-color: #f8f8f8;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
     h1 {
-      color: #333;
-      margin-bottom: 20px;
+      font-size: 2.5rem;
     }
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-      margin-top: 20px;
-    }
-    .gallery-item {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      overflow: hidden;
-      border-radius: 8px;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease;
-      background-color: #eee;
-    }
-    .gallery-item:hover {
-      transform: scale(1.05);
-    }
-    .gallery img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .image-caption {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 8px;
-      background-color: rgba(0, 0, 0, 0.7);
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-      text-align: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .gallery-item:hover .image-caption {
-      opacity: 1;
-    }
-    .error {
-      color: red;
-      font-weight: bold;
-      margin: 20px 0;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
     }
     .status {
-      margin: 10px 0;
-      padding: 8px;
       background-color: #e8f5e9;
       border-radius: 5px;
+      padding: 1rem;
+      margin: 1rem 0;
       font-weight: bold;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .loading {
       display: inline-block;
@@ -82,92 +54,212 @@
       border-top-color: #000;
       animation: spin 1s ease-in-out infinite;
       margin-right: 10px;
-      vertical-align: middle;
     }
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+    .error {
+      color: #e74c3c;
+      background-color: rgba(231, 76, 60, 0.1);
+      border-radius: 5px;
+      padding: 1rem;
+      margin: 1rem 0;
+      font-weight: bold;
+      text-align: center;
+    }
+    .filters {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .filter-title {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+      font-weight: bold;
+    }
+    .date-input {
+      padding: 0.7rem;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 1rem;
+      min-width: 200px;
+      margin: 0 0.5rem;
+    }
+    .filter-btn {
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      background-color: #3498db;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin: 0 0.5rem;
+    }
+    .filter-btn:hover {
+      background-color: #2980b9;
+    }
+    .reset-btn {
+      background-color: #95a5a6;
+    }
+    .reset-btn:hover {
+      background-color: #7f8c8d;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+      width: 100%;
+    }
+    @media (max-width: 768px) {
+      .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+    }
+    @media (max-width: 480px) {
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+    .gallery-item {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+      background-color: #eee;
+    }
+    .gallery-item:hover {
+      transform: scale(1.02);
+    }
+    .gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+    .image-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+      color: white;
+      font-size: 1rem;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: translateY(20px);
+    }
+    .gallery-item:hover .image-caption {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fadeIn {
+      animation: fadeIn 0.5s ease forwards;
+    }
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      color: #7f8c8d;
+      margin: 1rem 0;
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <h1>Galerie d'images</h1>
-  <div class="status" id="status"><span class="loading"></span>Chargement des images...</div>
-  <div id="gallery" class="gallery"></div>
-  <p id="error-message" class="error"></p>
+  <header>
+    <h1>Galerie d'images</h1>
+  </header>
+  
+  <div class="container">
+    <div class="status" id="status"><span class="loading"></span>Chargement des images...</div>
+    
+    <div class="filters">
+      <div class="filter-title">Filtrer par date (jour complet)</div>
+      <input type="date" id="filter-date" class="date-input">
+      <button type="button" id="apply-filter" class="filter-btn">Appliquer</button>
+      <button type="button" id="reset-filter" class="filter-btn reset-btn">Réinitialiser</button>
+    </div>
+    
+    <div id="no-results" class="no-results">
+      Aucune image ne correspond à la date sélectionnée.
+    </div>
+    
+    <div id="gallery" class="gallery"></div>
+    <p id="error-message" class="error"></p>
+  </div>
 
   <script>
+    // Variables globales pour stocker les données des images
+    let allFiles = [];
+    let displayedFiles = [];
+    
     // Fonction pour charger les images depuis Google Apps Script
     async function loadImages() {
       const scriptUrl = "https://script.google.com/macros/s/AKfycbwqYlNYRBJmPUParaH9-9JlRLvHMXZPz-JdZdG6FpnWHbFCOH9ZZAyC4cRXXmFqzgA9Qg/exec";
       
       const statusElement = document.getElementById("status");
       const errorElement = document.getElementById("error-message");
-      const gallery = document.getElementById("gallery");
+      const noResults = document.getElementById("no-results");
       
-      errorElement.textContent = ""; // Effacer les messages d'erreur précédents
+      errorElement.textContent = "";
+      noResults.style.display = "none";
 
       try {
         const response = await fetch(scriptUrl);
-        
         if (!response.ok) {
           throw new Error(`Erreur de chargement des images. Statut: ${response.status}`);
         }
         
         const data = await response.json();
         
-        gallery.innerHTML = ""; // Réinitialiser la galerie avant de charger les images
-
         if (!data.files || data.files.length === 0) {
           statusElement.innerHTML = "Aucune image trouvée";
           errorElement.textContent = "Aucune image trouvée dans le dossier.";
           return;
         }
 
-        let loadedImagesCount = 0;
-        let totalImages = data.files.length;
-        
-        const updateStatus = () => {
-          statusElement.innerHTML = `${loadedImagesCount} sur ${totalImages} images chargées`;
-        };
-        
-        data.files.forEach(file => {
-          const container = document.createElement("div");
-          container.className = "gallery-item";
-          
-          const img = document.createElement("img");
-          img.src = file.thumbnailUrl || file.url;
-          img.alt = file.name;
-          img.loading = "lazy";
-          
-          const caption = document.createElement("div");
-          caption.className = "image-caption";
-          
-          // Ajouter la date et l'heure de la prise de la photo
+        // Stocker toutes les images et convertir la date en objet Date
+        allFiles = data.files.map(file => {
           if (file.dateTaken) {
-            caption.textContent = `Prise le ${file.dateTaken}`;
-          } else {
-            caption.textContent = "Date inconnue";
-          }
-          
-          container.appendChild(caption);
-          
-          img.onerror = function() {
-            console.error(`Erreur de chargement de l'image: ${file.name}`);
-            if (img.src === file.thumbnailUrl && file.url) {
-              img.src = file.url;
-            } else {
-              this.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f2f2f2'/%3E%3Cpath d='M30,40 L70,60 M30,60 L70,40' stroke='%23cccccc' stroke-width='5'/%3E%3C/svg%3E";
+            try {
+              file.dateObj = new Date(file.dateTaken);
+              if (isNaN(file.dateObj.getTime())) {
+                file.dateObj = null;
+              }
+            } catch (e) {
+              console.error("Erreur lors de la conversion de la date:", e);
+              file.dateObj = null;
             }
-          };
-          
-          img.onload = function() {
-            loadedImagesCount++;
-            updateStatus();
-          };
-          
-          container.appendChild(img);
-          gallery.appendChild(container);
+          } else {
+            file.dateObj = null;
+          }
+          return file;
         });
+        
+        // Afficher toutes les images initialement
+        displayedFiles = [...allFiles];
+        renderGallery();
         
       } catch (error) {
         statusElement.innerHTML = "Erreur de chargement";
@@ -176,8 +268,109 @@
       }
     }
 
-    // Appeler la fonction pour charger les images au démarrage
-    document.addEventListener("DOMContentLoaded", loadImages);
+    // Fonction pour afficher la galerie avec les images filtrées
+    function renderGallery() {
+      const statusElement = document.getElementById("status");
+      const gallery = document.getElementById("gallery");
+      const noResults = document.getElementById("no-results");
+      
+      gallery.innerHTML = "";
+      
+      if (displayedFiles.length === 0) {
+        statusElement.innerHTML = "Aucune image ne correspond aux filtres";
+        noResults.style.display = "block";
+        return;
+      } else {
+        noResults.style.display = "none";
+        statusElement.innerHTML = `${displayedFiles.length} image(s) trouvée(s)`;
+      }
+
+      let loadedImagesCount = 0;
+      const totalImages = displayedFiles.length;
+      
+      const updateStatus = () => {
+        statusElement.innerHTML = `${loadedImagesCount} sur ${totalImages} images chargées`;
+      };
+      
+      displayedFiles.forEach((file, index) => {
+        const container = document.createElement("div");
+        container.className = "gallery-item fadeIn";
+        container.style.animationDelay = `${index * 0.05}s`;
+        
+        const img = document.createElement("img");
+        img.src = file.thumbnailUrl || file.url;
+        img.alt = file.name;
+        img.loading = "lazy";
+        
+        const caption = document.createElement("div");
+        caption.className = "image-caption";
+        caption.textContent = file.dateTaken ? `Prise le ${file.dateTaken}` : "Date inconnue";
+        
+        container.appendChild(img);
+        container.appendChild(caption);
+        gallery.appendChild(container);
+        
+        img.onerror = function() {
+          console.error(`Erreur de chargement de l'image: ${file.name}`);
+          if (img.src === file.thumbnailUrl && file.url) {
+            img.src = file.url;
+          } else {
+            this.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f2f2f2'/%3E%3Cpath d='M30,40 L70,60 M30,60 L70,40' stroke='%23cccccc' stroke-width='5'/%3E%3C/svg%3E";
+          }
+        };
+        
+        img.onload = function() {
+          loadedImagesCount++;
+          updateStatus();
+        };
+      });
+    }
+
+    // Fonction pour filtrer les images pour le jour sélectionné (00:00 - 23:59:59)
+    function filterImages() {
+      const dateInput = document.getElementById("filter-date").value;
+      
+      // Si aucune date n'est sélectionnée, afficher toutes les images
+      if (!dateInput) {
+        displayedFiles = [...allFiles];
+        renderGallery();
+        return;
+      }
+      
+      // Création d'un intervalle couvrant toute la journée
+      const startDate = new Date(dateInput);
+      const endDate = new Date(dateInput);
+      endDate.setHours(23, 59, 59, 999);
+      
+      displayedFiles = allFiles.filter(file => {
+        if (!file.dateObj) return false;
+        return file.dateObj >= startDate && file.dateObj <= endDate;
+      });
+      
+      renderGallery();
+    }
+
+    // Fonction pour réinitialiser le filtre
+    function resetFilters() {
+      document.getElementById("filter-date").value = "";
+      displayedFiles = [...allFiles];
+      renderGallery();
+    }
+
+    // Initialisation lors du chargement de la page
+    document.addEventListener("DOMContentLoaded", () => {
+      loadImages();
+      
+      document.getElementById("apply-filter").addEventListener("click", filterImages);
+      document.getElementById("reset-filter").addEventListener("click", resetFilters);
+      
+      // Permettre le filtrage en appuyant sur "Entrée"
+      document.getElementById("filter-date").addEventListener("keyup", (event) => {
+        if (event.key === "Enter") {
+          filterImages();
+        }
+      });
+    });
   </script>
 </body>
 </html>

@@ -1,0 +1,206 @@
+/* Variables pour faciliter les modifications */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --accent-color: #e74c3c;
+    --light-bg: #f9f9f9;
+    --dark-bg: #2c3e50;
+    --text-color: #333;
+    --light-text: #fff;
+    --border-radius: 12px;
+    --box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+  }
+  
+  /* Style général */
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* En-tête */
+  header {
+    background-color: var(--dark-bg);
+    color: var(--light-text);
+    padding: 30px 0;
+    text-align: center;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: var(--light-text);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Statut et chargement */
+  .status {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 4px;
+    padding: 12px 15px;
+    margin: 20px 0;
+    font-size: 1rem;
+    box-shadow: var(--box-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .loading {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(52, 152, 219, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 15px;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Message d'erreur */
+  .error {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: var(--accent-color);
+    border-left: 4px solid var(--accent-color);
+    padding: 15px;
+    border-radius: 4px;
+    margin: 20px 0;
+    font-weight: 500;
+    text-align: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Galerie */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+    padding: 20px 0;
+  }
+  
+  .gallery-item {
+    position: relative;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    height: 250px;
+    background-color: #eee;
+    cursor: pointer;
+  }
+  
+  .gallery-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .gallery img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: var(--transition);
+  }
+  
+  .gallery-item:hover img {
+    transform: scale(1.1);
+  }
+  
+  .image-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    color: white;
+    font-size: 0.9rem;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    transform: translateY(20px);
+  }
+  
+  .gallery-item:hover .image-caption {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .gallery {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .gallery-item {
+      height: 200px;
+    }
+    
+    h1 {
+      font-size: 2rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .gallery {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    
+    .gallery-item {
+      height: 150px;
+    }
+    
+    h1 {
+      font-size: 1.8rem;
+    }
+    
+    .container {
+      padding: 10px;
+    }
+  }
+  
+  /* Animation pour l'apparition des éléments */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .gallery-item {
+    animation: fadeIn 0.5s ease forwards;
+    opacity: 0;
+  }
+  
+  /* Retarder l'animation pour chaque élément */
+  .gallery-item:nth-child(1) { animation-delay: 0.1s; }
+  .gallery-item:nth-child(2) { animation-delay: 0.2s; }
+  .gallery-item:nth-child(3) { animation-delay: 0.3s; }
+  .gallery-item:nth-child(4) { animation-delay: 0.4s; }
+  .gallery-item:nth-child(5) { animation-delay: 0.5s; }
+  .gallery-item:nth-child(6) { animation-delay: 0.6s; }
+  /* Et ainsi de suite pour plus d'éléments si nécessaire */
