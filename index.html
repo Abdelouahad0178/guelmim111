@@ -96,8 +96,7 @@
   <script>
     // Fonction pour charger les images depuis Google Apps Script
     async function loadImages() {
-      // Mettre à jour l'URL avec votre nouveau déploiement
-      const scriptUrl = "https://script.google.com/macros/s/AKfycbzH52bJsmOEaIff6QL-Qx4MLxDQ5KPvi4LMdGeaKvsvRow60HcdUa9cDfsA9X0Yn-Ml-g/exec";
+      const scriptUrl = "https://script.google.com/macros/s/AKfycbwqYlNYRBJmPUParaH9-9JlRLvHMXZPz-JdZdG6FpnWHbFCOH9ZZAyC4cRXXmFqzgA9Qg/exec";
       
       const statusElement = document.getElementById("status");
       const errorElement = document.getElementById("error-message");
@@ -108,63 +107,57 @@
       try {
         const response = await fetch(scriptUrl);
         
-        // Vérification si la réponse est OK
         if (!response.ok) {
           throw new Error(`Erreur de chargement des images. Statut: ${response.status}`);
         }
         
-        // Récupération des données JSON
         const data = await response.json();
         
         gallery.innerHTML = ""; // Réinitialiser la galerie avant de charger les images
 
-        // Si aucune image n'est trouvée
         if (!data.files || data.files.length === 0) {
           statusElement.innerHTML = "Aucune image trouvée";
           errorElement.textContent = "Aucune image trouvée dans le dossier.";
           return;
         }
 
-        // Compteur d'images chargées avec succès
         let loadedImagesCount = 0;
         let totalImages = data.files.length;
         
-        // Fonction pour mettre à jour le statut
         const updateStatus = () => {
           statusElement.innerHTML = `${loadedImagesCount} sur ${totalImages} images chargées`;
         };
         
-        // Boucle pour ajouter les images dans la galerie
         data.files.forEach(file => {
           const container = document.createElement("div");
           container.className = "gallery-item";
           
           const img = document.createElement("img");
-          // Essayer d'abord l'URL de miniature qui est généralement plus fiable
           img.src = file.thumbnailUrl || file.url;
           img.alt = file.name;
-          img.loading = "lazy"; // Chargement paresseux pour améliorer les performances
+          img.loading = "lazy";
           
-          // Ajouter une légende
           const caption = document.createElement("div");
           caption.className = "image-caption";
-          caption.textContent = file.name;
+          
+          // Ajouter la date et l'heure de la prise de la photo si elle existe
+          if (file.dateTaken) {
+            caption.textContent = `${file.name} - Prise le ${file.dateTaken}`;
+          } else {
+            caption.textContent = file.name;
+          }
+          
           container.appendChild(caption);
           
-          // Gérer les erreurs d'image
           img.onerror = function() {
             console.error(`Erreur de chargement de l'image: ${file.name}`);
-            // Essayer l'URL alternative si la première échoue
             if (img.src === file.thumbnailUrl && file.url) {
-              console.log(`Essai avec l'URL alternative pour: ${file.name}`);
               img.src = file.url;
             } else {
-              // Afficher une image de remplacement si les deux échouent
               this.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f2f2f2'/%3E%3Cpath d='M30,40 L70,60 M30,60 L70,40' stroke='%23cccccc' stroke-width='5'/%3E%3C/svg%3E";
             }
           };
           
-          // Incrémenter le compteur d'images chargées
           img.onload = function() {
             loadedImagesCount++;
             updateStatus();
@@ -181,7 +174,6 @@
       }
     }
 
-    // Appeler la fonction pour charger les images au démarrage
     document.addEventListener("DOMContentLoaded", loadImages);
   </script>
 </body>
