@@ -226,7 +226,7 @@
       try {
         const response = await fetch(scriptUrl, {
           method: 'GET',
-          cache: 'no-store' // Évite les problèmes de cache
+          cache: 'no-store'
         });
         if (!response.ok) {
           throw new Error(`Erreur de chargement des images. Statut: ${response.status}`);
@@ -299,7 +299,7 @@
         container.style.animationDelay = `${index * 0.05}s`;
         
         const img = document.createElement("img");
-        img.src = file.url; // Utilise l'URL en taille réelle depuis doGet.gs
+        img.src = file.url;
         img.alt = file.name;
         img.loading = "lazy";
         
@@ -333,9 +333,12 @@
         renderGallery();
         return;
       }
-      
-      const startDate = new Date(dateInput);
-      const endDate = new Date(dateInput);
+
+      const selectedDate = new Date(dateInput);
+      // Ajuster pour inclure toute la journée
+      const startDate = new Date(selectedDate);
+      startDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(selectedDate);
       endDate.setHours(23, 59, 59, 999);
       
       displayedFiles = allFiles.filter(file => {
